@@ -29,6 +29,7 @@ function ssh_con(){
    else
        ps -ef | grep -v grep|grep "$ssh_str" | awk '{print $2}' | xargs kill -9
        echo "$ssh_port is reconnecting"
+       echo $STM > $ssh_file
        $ssh_str
    fi
 }
