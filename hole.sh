@@ -16,25 +16,20 @@ function ssh_con(){
 
 
    SSH_NUM=$(ps -ef |grep -v grep| grep "$ssh_str" | wc -l)
-   if [ $SSH_NUM -gt 1 ];then
-        ps -ef | grep -v grep|grep "$ssh_str" | awk '{print $2}' | xargs kill -9  
-   elif [ $SSH_NUM -eq 1 ];then
-        touch $ssh_file
-	STM=`date +%s `
-	OLD_STM=$(cat $ssh_file)
-        [ "$OLD_STM" ] || OLD_STM=10
-        STEP=$(( STM-OLD_STM ))
 
-        echo $STEP
-	if [ $STEP -gt 600 ];then
-	   echo $STM > $ssh_file
-	   echo 'time to kill'
-	   ps -ef | grep -v grep|grep "$ssh_str" | awk '{print $2}' | xargs kill -9
-	fi
-	echo 'no problem'
+   touch $ssh_file
+   STM=`date +%s `
+   OLD_STM=$(cat $ssh_file)
+   [ "$OLD_STM" ] || OLD_STM=10
+   STEP=$(( STM-OLD_STM ))
+
+   # 10min and only one ssh connect
+   if [ $SSH_NUM -eq 1 ] && [ $STEP -lt 600 ];then
+       echo "$ssh_port is ok"
    else
-	echo "ssh_con"
-   	$ssh_str
+       ps -ef | grep -v grep|grep "$ssh_str" | awk '{print $2}' | xargs kill -9
+       echo "$ssh_port is reconnecting"
+       $ssh_str
    fi
 }
 
