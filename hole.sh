@@ -23,10 +23,10 @@ function ssh_con(){
 	STM=`date +%s `
 	OLD_STM=$(cat $ssh_file)
         [ "$OLD_STM" ] || OLD_STM=10
-        echo $OLD_STM
-        STEP=$((STM-OLD_STM))
+        STEP=$(( STM-OLD_STM ))
+
         echo $STEP
-	if [[ $STEP -gt 600 ]];then
+	if [ $STEP -gt 600 ];then
 	   echo $STM > $ssh_file
 	   echo 'time to kill'
 	   ps -ef | grep -v grep|grep "$ssh_str" | awk '{print $2}' | xargs kill -9
@@ -34,15 +34,14 @@ function ssh_con(){
 	echo 'no problem'
    else
 	echo "ssh_con"
-   	$ssh_str 
+   	$ssh_str
    fi
 }
 
 
-cat host_port.sh | while read host_port;
-do 
+cat /data/sh/host_port.sh | while read host_port;
+do
 	ssh_con "$host_port"
 done
-
 
 
