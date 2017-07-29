@@ -1,1 +1,6 @@
-16080:localhost:16080 root@youserverip
+10080:localhost:8000 root@59.110.217.133
+11080:localhost:11080 root@59.110.217.133
+12080:localhost:12080 root@59.110.217.133
+12022:localhost:12022 root@59.110.217.133
+15080:localhost:15080 root@59.110.217.133
+16080:localhost:16080 root@59.110.217.133 www.daobuzhi.com
