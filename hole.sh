@@ -17,10 +17,18 @@ function monitor_service(){
 }
 
 
+function autossh_con(){
+    #   ssh_str="autossh -M 0  -CNfgP   cli-16080"
+    echo 'hello'
+
+}
+
+
+
+
 function ssh_con(){
    # analyse the service conn
    loc_nu=$(ps -ef | grep -v grep | grep "$(echo $1)" | wc -l)
-
    ssh_str="ssh -CfNgqP -R $1"
    remote_str=$(echo $1 | awk '{print $2}')
    ssh_port=$(echo $1 | awk '{print $1}'| awk -F ":" '{print $3}')
@@ -33,23 +41,25 @@ function ssh_con(){
         echo "$ssh_port  is not servicing"
         echo "$ssh_port  remote and local is killed"
         ps -ef | grep -v grep| grep "$(echo $1)" | awk '{print $2}' | xargs kill -9
-        ssh $remote_str "netstat -anp | grep 0.0.0.0:$ssh_port | awk '{print \$7}' | awk -F "/" '{print \$1}'| xargs kill -9 "
+        ssh $remote_str "netstat -anp | grep LISTEN |grep $ssh_port | awk '{print \$7}' | awk -F "/" '{print \$1}'| xargs kill -9 "
      else
         echo "$ssh_port remote service is ok"
      fi
-     return
+
+   else
+       if [ $loc_nu -gt 1 ] ;then
+         #reset local conn
+         echo "$ssh_port local is reset"
+         ps -ef | grep -v grep| grep "$(echo $1)" | awk '{print $2}' | xargs kill -9
+       fi
+
+       echo "$ssh_port is connecting"
+       $ssh_str
+
    fi
 
 
 
-   if [ $loc_nu -gt 1 ] ;then
-     #reset local conn
-     echo "$ssh_port local is reset"
-     ps -ef | grep -v grep| grep "$(echo $1)" | awk '{print $2}' | xargs kill -9
-   fi
-
-   echo "$ssh_port is connecting"
-   $ssh_str
 }
 
 
